@@ -54,7 +54,6 @@ def run(
     - (Evaluation runner will be plugged in later)
     """
     try:
-        # Load & validate config (EXIT CODE 1 on failure)
         cfg = load_config(config)
 
         if verbose:
@@ -66,29 +65,31 @@ def run(
         console.print(f"Models: {[m.name for m in cfg.models]}")
         console.print(f"Output directory: [yellow]{output_dir}[/yellow]")
 
-        # Placeholder – evaluation runner will be added in next phases
         console.print(
             "[bold blue]Configuration validated successfully.[/bold blue]"
         )
 
-        # SUCCESS
-        raise typer.Exit(code=0)
+        # SUCCESS → return cleanly
+        return
 
     except ConfigLoadError as exc:
         console.print(
             f"[bold red]Configuration error:[/bold red]\n{exc}",
             highlight=False,
         )
-        # EXIT CODE 1 = Config error
         raise typer.Exit(code=1)
 
-    except Exception as exc:  # pragma: no cover (future runtime errors)
+    except typer.Exit:
+        # IMPORTANT: allow Typer exits to propagate
+        raise
+
+    except Exception as exc:  # pragma: no cover
         console.print(
             f"[bold red]Fatal error:[/bold red] {exc}",
             highlight=False,
         )
-        # EXIT CODE 2 = Metric / runtime failure
         raise typer.Exit(code=2)
+
 
 
 @app.command()

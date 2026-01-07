@@ -17,7 +17,7 @@ env/
 
 # Poetry
 .poetry/
-poetry.lock
+
 
 # Pytest / Coverage
 .pytest_cache/

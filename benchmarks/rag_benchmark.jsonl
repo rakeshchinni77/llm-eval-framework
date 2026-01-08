@@ -1,0 +1,13 @@
+{"id":"q01","query":"What is the capital of France?","expected_answer":"Paris","retrieved_contexts":["Paris is the capital city of France."],"difficulty":"easy","category":"geography"}
+{"id":"q02","query":"Who wrote Hamlet?","expected_answer":"William Shakespeare","retrieved_contexts":["Hamlet is a tragedy written by William Shakespeare."],"difficulty":"easy","category":"literature"}
+{"id":"q03","query":"What is the boiling point of water?","expected_answer":"100°C","retrieved_contexts":["Water boils at 100 degrees Celsius at sea level."],"difficulty":"easy","category":"science"}
+
+{"id":"q04","query":"Who discovered gravity?","expected_answer":"Isaac Newton","retrieved_contexts":["Gravity is a force studied extensively in physics."],"difficulty":"medium","category":"hallucination_trap"}
+
+{"id":"q05","query":"What is the GDP growth rate of India in 2022?","expected_answer":"Approximately 7%","retrieved_contexts":[],"difficulty":"hard","category":"empty_context"}
+
+{"id":"q06","query":"Which country won the 2011 Cricket World Cup and who was the captain?","expected_answer":"India, captained by MS Dhoni","retrieved_contexts":["India won the 2011 Cricket World Cup.","MS Dhoni was the captain of the Indian team."],"difficulty":"medium","category":"multi_hop"}
+
+{"id":"q07","query":"What does Apple manufacture?","expected_answer":"Consumer electronics like iPhones and Macs","retrieved_contexts":["Apple is a technology company."],"difficulty":"medium","category":"ambiguous"}
+
+{"id":"q08","query":"Who is the CEO of Tesla?","expected_answer":"Elon Musk","retrieved_contexts":["Tesla produces electric vehicles."],"difficulty":"medium","category":"irrelevant_context"}

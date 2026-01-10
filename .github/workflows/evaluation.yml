@@ -1,0 +1,59 @@
+name: LLM Evaluation CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          poetry config virtualenvs.create false
+          poetry install --no-interaction --no-ansi
+
+      # UNIT + INTEGRATION TESTS
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ --cov=llm_eval --cov-report=term-missing
+
+      # CI-SAFE EVALUATION RUN
+      - name: Run evaluation (CI config)
+        run: |
+          poetry run llm-eval run \
+            --config examples/config_ci.yaml \
+            --output-dir results
+
+      # UPLOAD ARTIFACTS
+      - name: Upload evaluation results
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-results
+          path: results/
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-screenshots
+          path: screenshots/

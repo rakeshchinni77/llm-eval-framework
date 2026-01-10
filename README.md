@@ -10,6 +10,20 @@ This framework is designed for:
 
 ---
 
+## CLI Demonstration
+
+Below is an example of running the evaluation framework via CLI:
+
+![CLI Run](screenshots/histogram_bleu.png)
+
+The command used:
+
+```bash
+llm-eval run --config examples/config.yaml --output-dir results/
+```
+
+---
+
 ## Problem This Project Solves
 
 Evaluating LLM outputs is non-trivial because:

@@ -10,8 +10,12 @@ from pathlib import Path
 import typer
 from rich.console import Console
 
+import llm_eval.metrics
+
 from llm_eval.version import __version__
 from llm_eval.config.loader import load_config, ConfigLoadError
+from llm_eval.data.dataset_loader import load_dataset
+from llm_eval.evaluation.runner import EvaluationRunner
 
 app = typer.Typer(
     name="llm-eval",
@@ -36,7 +40,7 @@ def run(
         ...,
         "--output-dir",
         "-o",
-        help="Directory where evaluation reports and visualizations will be saved.",
+        help="Directory where evaluation results and visualizations will be saved.",
     ),
     verbose: bool = typer.Option(
         False,
@@ -46,12 +50,13 @@ def run(
     ),
 ) -> None:
     """
-    Run an evaluation based on the provided configuration file.
+    Run the full LLM evaluation pipeline.
 
     Responsibilities:
-    - Validate configuration
-    - Prepare evaluation context
-    - (Evaluation runner will be plugged in later)
+    - Load and validate configuration
+    - Load dataset
+    - Execute evaluation runner
+    - Persist raw scores for reporting & visualization
     """
     try:
         cfg = load_config(config)
@@ -59,18 +64,24 @@ def run(
         if verbose:
             console.print("[bold cyan]Verbose mode enabled[/bold cyan]")
 
-        console.print(
-            f"[bold green]llm-eval v{__version__}[/bold green] configuration loaded"
-        )
+        console.print(f"[bold green]llm-eval v{__version__}[/bold green]")
+        console.print(f"Dataset: {cfg.dataset.path}")
         console.print(f"Models: {[m.name for m in cfg.models]}")
         console.print(f"Output directory: [yellow]{output_dir}[/yellow]")
 
-        console.print(
-            "[bold blue]Configuration validated successfully.[/bold blue]"
+        dataset = load_dataset(cfg.dataset.path)
+
+        runner = EvaluationRunner(
+            dataset=dataset,
+            models=[m.model_dump() for m in cfg.models],
+            metrics=cfg.metrics,
+            output_dir=output_dir,
         )
 
-        # SUCCESS → return cleanly
-        return
+        runner.run()
+
+        console.print("[bold blue]Evaluation completed successfully[/bold blue]")
+        raise typer.Exit(code=0)
 
     except ConfigLoadError as exc:
         console.print(
@@ -80,7 +91,7 @@ def run(
         raise typer.Exit(code=1)
 
     except typer.Exit:
-        # IMPORTANT: allow Typer exits to propagate
+        # Allow Typer exits to propagate cleanly
         raise
 
     except Exception as exc:  # pragma: no cover
@@ -89,7 +100,6 @@ def run(
             highlight=False,
         )
         raise typer.Exit(code=2)
-
 
 
 @app.command()

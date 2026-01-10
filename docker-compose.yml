@@ -1,0 +1,25 @@
+services:
+  llm-eval:
+    build: .
+    container_name: llm-eval
+
+    command: >
+      run
+      --config examples/config.yaml
+      --output-dir /results
+
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+
+    volumes:
+      - ./benchmarks:/app/benchmarks
+      - ./examples:/app/examples
+      - ./results:/results
+      - ./screenshots:/app/screenshots
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import llm_eval"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

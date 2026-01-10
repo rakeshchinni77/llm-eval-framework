@@ -1,0 +1,14 @@
+dataset:
+  path: benchmarks/rag_benchmark.jsonl
+
+models:
+  - name: model_a
+    predictions: examples/model_outputs/model_a_outputs.jsonl
+
+metrics:
+  - name: bleu
+  - name: rouge_l
+
+quality_gates:
+  thresholds:
+    bleu.mean: 0.01

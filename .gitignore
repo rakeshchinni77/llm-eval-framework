@@ -59,7 +59,11 @@ outputs/
 .cache/
 .huggingface/
 
-# Visualization Outputs
+# Visualization Outputs (ignore everywhere EXCEPT screenshots)
 *.png
 *.svg
 *.pdf
+!screenshots/
+!screenshots/*.png
+!screenshots/*.svg
+!screenshots/*.pdf
